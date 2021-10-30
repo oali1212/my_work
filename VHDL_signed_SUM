@@ -1,0 +1,35 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
+entity adderx is
+port ( a,b : in std_logic_vector(3 downto 0) ;
+ sum : out std_logic_vector(3 downto 0 )      ) ; 
+
+end adderx ; 
+
+architecture arc of adderx is 
+signal a_sign, b_sign : std_logic ; 
+signal a_mag, b_mag : unsigned(2 downto 0) ; 
+signal max, min, sum_mag : unsigned(2 downto 0 ) ; 
+signal sum_sign : std_logic ; 
+begin 
+a_sign<=a(3) ;
+ b_sign<=b(3) ; 
+a_mag<=unsigned(a(2 downto 0)) ;
+b_mag<=unsigned(b(2 downto 0)) ;
+
+ 
+process(a_mag,b_mag,a_sign,b_sign) 
+begin
+if a_mag > b_mag then 
+max <= a_mag ; min <= b_mag ;sum_sign<=a_sign ; 
+else 
+max<= b_mag ; min <=a_mag ; sum_sign<=b_sign ; 
+end if ; 
+sum_mag<= max + min  when  a_sign=b_sign 
+else max-min ; 
+
+sum<=std_logic_vector( sum_sign & sum_mag) ;
+end process ; 
+end arc ; 
