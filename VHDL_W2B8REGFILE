@@ -1,0 +1,41 @@
+library ieee ;
+use ieee.std_logic_1164.all ;
+use ieee.std_LOGIC_UNSIGNED.ALL ; 
+USE IEEE.NUMERIC_STD.ALL  ; 
+
+entity regfile2x8 is  --- wxb memory 
+generic ( 
+b : integer :=8  ;
+w : integer :=2 ) ;
+
+port( 
+
+rst,clk,enable : in std_logic ;  -- normal functionality 
+in_pos, out_pos: in std_logic_vector( w-1 downto 0 )  ; -- determines the postitions in case of write and read operations respectively
+data_in : in std_logic_vector(b-1 downto 0 )   ; --writing 
+data_out : out std_logic_vector(b-1 downto 0) ) ; --reading 
+end regfile2x8 ; 
+
+
+architecture beh of regfile2x8  is 
+type reg_file_type is array ((2**w)-1  downto 0) of std_logic_vector(b-1 downto 0)  ;  --- creating an array of 2^(w)xB , minus one is just a way to include 0 
+signal reg_array : reg_file_type ; 
+
+begin
+
+process(clk,rst) 
+
+begin
+if( rst='1' ) then 
+reg_array <= (others =>(others =>'0'))  ;   -- equivalent of saying "00" of "00000000" 
+elsif(clk'event and  clk='1' )  then 
+if(enable='1') then 
+
+
+reg_array(to_integer(unsigned(in_pos)))<=data_in ; --- just saying , the array register cell of coordinate of in_pos must be assigned to the data entering(writin) 
+end if ; 
+end if ; 
+data_out<=reg_array(to_integer(unsigned(in_pos))) ; 
+end process ;
+end beh; 
+
