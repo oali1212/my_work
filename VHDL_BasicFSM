@@ -1,0 +1,87 @@
+library ieee ;
+use ieee.std_logic_1164.all ;
+use ieee.std_LOGIC_UNSIGNED.ALL ; 
+USE IEEE.NUMERIC_STD.ALL  ; 
+
+entity fsm_basic is 
+port(
+a,b,rst,clk : in std_logic ; 
+y0,y1 : out std_logic ) ; 
+end fsm_basic ; 
+
+
+--state register 
+architecture custom of fsm_basic is 
+type state_type is (s0, s1, s2) ; 
+signal state_reg, state_next : state_type ; 
+begin 
+
+
+process(clk,rst) 
+begin
+if(rst='1') then 
+state_reg<=s0 ; 
+elsif(rising_edge(clk)) then 
+state_reg<=state_next ; 
+end if ; 
+end process ; 
+
+----next state logic 
+process(state_reg,a,b) 
+begin 
+if(state_reg=s0)  then 	--s0 description 
+
+if(a='1' and b='1') then 
+state_next<=s2 ; 
+elsif(a='1' and b='0') then 
+state_next<=s1 ; 
+else 
+state_next<=s0 ; 
+end if ; 
+-- ended s0 
+elsif(state_reg=s1) then -- s1 description 
+if(a='1') then 
+state_next<=s0 ; 
+else 
+state_next<=s1 ; 
+end if; 
+--ended s1 
+
+
+elsif(state_reg=s2) then  -- s2 description 
+state_next<=s0 ; 
+
+end if ; 
+end process ; 
+
+---- output logic could be mealy or mroe or both 
+
+process(state_reg,a,b) -- mealy logic ; which is the one inside the bubbles , in other words , outputs are only determined by states 
+begin
+if( state_reg /= s2) then 
+y1<='1' ; 
+else 
+y1<='0' ; 
+end if ; 
+end process ; 
+
+
+process(state_reg,a,b) 
+begin
+if(state_reg=s0 and a='1' and b='1') then 
+y0<='1' ; 
+else 
+y0<='0' ;
+end if ; 
+
+
+ if(state_reg= s1 or state_reg=s2) then 
+y0<='0' ; 
+end if ; 
+
+end process ; 
+end custom  ; 
+
+
+
+
